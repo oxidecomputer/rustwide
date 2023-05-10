@@ -54,7 +54,7 @@ impl<'a> BuildBuilder<'a> {
     /// # fn main() -> Result<(), Box<dyn Error>> {
     /// # let workspace = WorkspaceBuilder::new("".as_ref(), "").init()?;
     /// # let toolchain = Toolchain::dist("");
-    /// # let krate = Crate::local("".as_ref());
+    /// # let krate = Crate::local("".as_ref(), "");
     /// # let sandbox = SandboxBuilder::new();
     /// let mut build_dir = workspace.build_dir("foo");
     /// build_dir.build(&toolchain, &krate, sandbox)
@@ -84,7 +84,7 @@ impl<'a> BuildBuilder<'a> {
     /// # fn main() -> Result<(), Box<dyn Error>> {
     /// # let workspace = WorkspaceBuilder::new("".as_ref(), "").init()?;
     /// # let toolchain = Toolchain::dist("");
-    /// # let krate = Crate::local("".as_ref());
+    /// # let krate = Crate::local("".as_ref(), "");
     /// # let manifest_dir = "/path/to/bar";
     /// let sandbox = SandboxBuilder::new().mount(
     ///     Path::new(manifest_dir),
@@ -122,7 +122,7 @@ impl<'a> BuildBuilder<'a> {
     /// # fn main() -> Result<(), Box<dyn Error>> {
     /// # let workspace = WorkspaceBuilder::new("".as_ref(), "").init()?;
     /// # let toolchain = Toolchain::dist("");
-    /// # let krate = Crate::local("".as_ref());
+    /// # let krate = Crate::local("".as_ref(), "");
     /// # let sandbox = SandboxBuilder::new();
     /// let mut build_dir = workspace.build_dir("foo");
     /// build_dir.build(&toolchain, &krate, sandbox).run(|build| {
@@ -156,7 +156,7 @@ impl BuildDirectory {
     /// # fn main() -> Result<(), Box<dyn Error>> {
     /// # let workspace = WorkspaceBuilder::new("".as_ref(), "").init()?;
     /// # let toolchain = Toolchain::dist("");
-    /// # let krate = Crate::local("".as_ref());
+    /// # let krate = Crate::local("".as_ref(), "");
     /// # let sandbox = SandboxBuilder::new();
     /// let mut build_dir = workspace.build_dir("foo");
     /// build_dir.build(&toolchain, &krate, sandbox).run(|build| {
@@ -256,7 +256,7 @@ impl<'ws> Build<'ws> {
     /// # fn main() -> Result<(), Box<dyn Error>> {
     /// # let workspace = WorkspaceBuilder::new("".as_ref(), "").init()?;
     /// # let toolchain = Toolchain::dist("");
-    /// # let krate = Crate::local("".as_ref());
+    /// # let krate = Crate::local("".as_ref(), "");
     /// # let sandbox = SandboxBuilder::new();
     /// let mut build_dir = workspace.build_dir("foo");
     /// build_dir.build(&toolchain, &krate, sandbox).run(|build| {
@@ -293,7 +293,7 @@ impl<'ws> Build<'ws> {
     /// # fn main() -> Result<(), Box<dyn Error>> {
     /// # let workspace = WorkspaceBuilder::new("".as_ref(), "").init()?;
     /// # let toolchain = Toolchain::dist("");
-    /// # let krate = Crate::local("".as_ref());
+    /// # let krate = Crate::local("".as_ref(), "");
     /// # let sandbox = SandboxBuilder::new();
     /// let mut build_dir = workspace.build_dir("foo");
     /// build_dir.build(&toolchain, &krate, sandbox).run(|build| {
@@ -309,7 +309,7 @@ impl<'ws> Build<'ws> {
 
     /// Get the name of the crate to be built
     pub fn crate_name(&self) -> &str {
-        &self.krate.name()
+        self.krate.name()
     }
 
     /// Get the path to the source code on the host machine (outside the sandbox).

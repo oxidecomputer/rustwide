@@ -49,7 +49,7 @@ impl GitRepo {
     }
 
     fn cached_path(&self, workspace: &Workspace) -> PathBuf {
-        let branch = self.branch.as_ref().map(|s| s.as_str()).unwrap_or("");
+        let branch = self.branch.as_deref().unwrap_or("");
         let component = format!("{}-{}", self.name, branch);
 
         workspace
