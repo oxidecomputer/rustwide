@@ -51,8 +51,8 @@ fn test_fetch() -> Result<(), Error> {
 fn test_fetch_with_authentication() -> Result<(), Error> {
     let workspace = crate::utils::init_workspace()?;
 
-    let repo = Repo::new(&workspace, "foo")?.authenticated();
-    let krate = Crate::git(&repo.serve()?, "foo");
+    let repo = Repo::new(&workspace, "foo-auth")?.authenticated();
+    let krate = Crate::git(&repo.serve()?, "foo-auth");
 
     let err = krate.fetch(&workspace).unwrap_err();
     if let Some(&CommandError::Timeout(_)) = err.downcast_ref() {
