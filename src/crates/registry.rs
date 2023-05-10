@@ -62,7 +62,7 @@ impl Registry {
 
 pub(super) struct RegistryCrate {
     registry: Registry,
-    name: String,
+    pub(super) name: String,
     version: String,
 }
 

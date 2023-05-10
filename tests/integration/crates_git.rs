@@ -8,8 +8,8 @@ fn test_fetch() -> Result<(), Error> {
     let toolchain = Toolchain::dist("stable");
     toolchain.install(&workspace)?;
 
-    let mut repo = Repo::new(&workspace)?;
-    let krate = Crate::git(&repo.serve()?);
+    let mut repo = Repo::new(&workspace, "foo")?;
+    let krate = Crate::git("foo", &repo.serve()?);
     krate.fetch(&workspace)?;
 
     // Return the commit that was used during a build.
@@ -51,8 +51,8 @@ fn test_fetch() -> Result<(), Error> {
 fn test_fetch_with_authentication() -> Result<(), Error> {
     let workspace = crate::utils::init_workspace()?;
 
-    let repo = Repo::new(&workspace)?.authenticated();
-    let krate = Crate::git(&repo.serve()?);
+    let repo = Repo::new(&workspace, "foo")?.authenticated();
+    let krate = Crate::git("foo", &repo.serve()?);
 
     let err = krate.fetch(&workspace).unwrap_err();
     if let Some(&CommandError::Timeout(_)) = err.downcast_ref() {
@@ -73,12 +73,12 @@ struct Repo {
 }
 
 impl Repo {
-    fn new(workspace: &Workspace) -> Result<Self, Error> {
+    fn new(workspace: &Workspace, name: &str) -> Result<Self, Error> {
         let source = tempfile::tempdir()?;
 
         // Initialize a cargo project with a git repo in it.
         Command::new(workspace, "cargo")
-            .args(&["init", "--name", "foo", "--bin"])
+            .args(&["init", "--name", name, "--bin"])
             .args(&[source.path()])
             .run()?;
 

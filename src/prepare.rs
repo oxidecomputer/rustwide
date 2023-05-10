@@ -407,7 +407,7 @@ mod tests {
 
         let result = toml.clone();
 
-        let krate = Crate::local("/dev/null".as_ref());
+        let krate = Crate::local("/dev/null".as_ref(), "foo");
         let patches: Vec<CratePatch> = Vec::new();
         let mut tweaker =
             TomlTweaker::new_with_table(&krate, toml.as_table().unwrap().clone(), &patches);
@@ -443,7 +443,7 @@ mod tests {
             members = []
         };
 
-        let krate = Crate::local("/dev/null".as_ref());
+        let krate = Crate::local("/dev/null".as_ref(), "foo");
         let patches: Vec<CratePatch> = Vec::new();
         let mut tweaker =
             TomlTweaker::new_with_table(&krate, toml.as_table().unwrap().clone(), &patches);
@@ -492,7 +492,7 @@ mod tests {
             baz = { path = "/path/to/baz" }
         };
 
-        let krate = Crate::local("/dev/null".as_ref());
+        let krate = Crate::local("/dev/null".as_ref(), "foo");
         let patches = vec![
             CratePatch::Git(GitCratePatch {
                 name: "quux".into(),

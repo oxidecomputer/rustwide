@@ -7,12 +7,23 @@ use log::{info, warn};
 use std::path::{Path, PathBuf};
 
 pub(super) struct GitRepo {
+    pub(super) name: String,
     url: String,
+    branch: Option<String>,
 }
 
 impl GitRepo {
-    pub(super) fn new(url: &str) -> Self {
-        Self { url: url.into() }
+    pub(super) fn new(url: &str, name: &str) -> Self {
+        Self {
+            name: name.into(),
+            url: url.into(),
+            branch: None,
+        }
+    }
+
+    pub(super) fn branch(mut self, branch: Option<&str>) -> Self {
+        self.branch = branch.map(|s| s.into());
+        self
     }
 
     pub(super) fn git_commit(&self, workspace: &Workspace) -> Option<String> {
@@ -38,10 +49,13 @@ impl GitRepo {
     }
 
     fn cached_path(&self, workspace: &Workspace) -> PathBuf {
+        let branch = self.branch.as_ref().map(|s| s.as_str()).unwrap_or("");
+        let component = format!("{}-{}", self.name, branch);
+
         workspace
             .cache_dir()
             .join("git-repos")
-            .join(crate::utils::escape_path(self.url.as_bytes()))
+            .join(crate::utils::escape_path(component.as_bytes()))
     }
 
     fn suppress_password_prompt_args(&self, workspace: &Workspace) -> Vec<String> {
@@ -77,8 +91,13 @@ impl CrateTrait for GitRepo {
         };
 
         let path = self.cached_path(workspace);
+
         let res = if path.join("HEAD").is_file() {
-            info!("updating cached repository {}", self.url);
+            info!(
+                "updating repository {} ({:?}) for {}",
+                self.url, self.branch, self.name
+            );
+
             Command::new(workspace, "git")
                 .args(&self.suppress_password_prompt_args(workspace))
                 .args(&["-c", "remote.origin.fetch=refs/heads/*:refs/heads/*"])
@@ -88,10 +107,20 @@ impl CrateTrait for GitRepo {
                 .run()
                 .with_context(|_| format!("failed to update {}", self.url))
         } else {
-            info!("cloning repository {}", self.url);
-            Command::new(workspace, "git")
+            info!(
+                "cloning repository {} ({:?}) for {}",
+                self.url, self.branch, self.name
+            );
+
+            let mut cmd = Command::new(workspace, "git")
                 .args(&self.suppress_password_prompt_args(workspace))
-                .args(&["clone", "--bare", &self.url])
+                .args(&["clone", "--bare"]);
+
+            if let Some(branch) = &self.branch {
+                cmd = cmd.args(&["--branch", branch]);
+            }
+
+            cmd.args(&[&self.url])
                 .args(&[&path])
                 .process_lines(&mut detect_private_repositories)
                 .run()

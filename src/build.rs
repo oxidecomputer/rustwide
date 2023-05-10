@@ -200,6 +200,7 @@ impl BuildDirectory {
         std::fs::create_dir_all(self.target_dir())?;
         let res = f(&Build {
             dir: self,
+            krate,
             toolchain,
             sandbox,
         })?;
@@ -235,6 +236,7 @@ impl BuildDirectory {
 /// This is created from [`BuildDirectory::build`](struct.BuildDirectory.html#method.build)
 pub struct Build<'ws> {
     dir: &'ws BuildDirectory,
+    krate: &'ws Crate,
     toolchain: &'ws Toolchain,
     sandbox: SandboxBuilder,
 }
@@ -303,6 +305,11 @@ impl<'ws> Build<'ws> {
     /// ```
     pub fn cargo<'pl>(&self) -> Command<'ws, 'pl> {
         self.cmd(self.toolchain.cargo())
+    }
+
+    /// Get the name of the crate to be built
+    pub fn crate_name(&self) -> &str {
+        &self.krate.name()
     }
 
     /// Get the path to the source code on the host machine (outside the sandbox).

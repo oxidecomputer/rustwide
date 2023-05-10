@@ -25,6 +25,15 @@ enum CrateType {
 pub struct Crate(CrateType);
 
 impl Crate {
+    /// Get the name of the crate
+    pub fn name(&self) -> &str {
+        match &self.0 {
+            CrateType::Registry(krate) => &krate.name,
+            CrateType::Git(repo) => &repo.name,
+            CrateType::Local(local) => &local.name,
+        }
+    }
+
     /// Load a crate from specified registry.
     pub fn registry(registry: AlternativeRegistry, name: &str, version: &str) -> Self {
         Crate(CrateType::Registry(registry::RegistryCrate::new(
@@ -45,13 +54,21 @@ impl Crate {
 
     /// Load a crate from a git repository. The full URL needed to clone the repo has to be
     /// provided.
-    pub fn git(url: &str) -> Self {
-        Crate(CrateType::Git(git::GitRepo::new(url)))
+    pub fn git(url: &str, name: &str) -> Self {
+        Crate(CrateType::Git(git::GitRepo::new(name, url)))
+    }
+
+    /// Load a crate from a git repository targeting a specific branch. The full URL needed to
+    /// clone the repo has to be provided.
+    pub fn git_branch(url: &str, name: &str, branch: &str) -> Self {
+        Crate(CrateType::Git(
+            git::GitRepo::new(name, url).branch(Some(branch)),
+        ))
     }
 
     /// Load a crate from a directory in the local filesystem.
-    pub fn local(path: &Path) -> Self {
-        Crate(CrateType::Local(local::Local::new(path)))
+    pub fn local(path: &Path, name: &str) -> Self {
+        Crate(CrateType::Local(local::Local::new(path, name)))
     }
 
     /// Fetch the crate's source code and cache it in the workspace. This method will reach out to

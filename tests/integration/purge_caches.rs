@@ -22,7 +22,10 @@ fn test_purge_caches() -> Result<(), Error> {
 
     let crates = vec![
         Crate::crates_io("lazy_static", "1.4.0"),
-        Crate::git("https://github.com/pietroalbini/git-credential-null"),
+        Crate::git(
+            "https://github.com/pietroalbini/git-credential-null",
+            "git-credential-null",
+        ),
     ];
 
     // Simulate a build, which is going to fill up the caches.
