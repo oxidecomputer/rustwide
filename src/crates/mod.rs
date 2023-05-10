@@ -55,14 +55,14 @@ impl Crate {
     /// Load a crate from a git repository. The full URL needed to clone the repo has to be
     /// provided.
     pub fn git(url: &str, name: &str) -> Self {
-        Crate(CrateType::Git(git::GitRepo::new(name, url)))
+        Crate(CrateType::Git(git::GitRepo::new(url, name)))
     }
 
     /// Load a crate from a git repository targeting a specific branch. The full URL needed to
     /// clone the repo has to be provided.
     pub fn git_branch(url: &str, name: &str, branch: &str) -> Self {
         Crate(CrateType::Git(
-            git::GitRepo::new(name, url).branch(Some(branch)),
+            git::GitRepo::new(url, name).branch(Some(branch)),
         ))
     }
 

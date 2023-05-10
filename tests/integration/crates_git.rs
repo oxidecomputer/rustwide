@@ -9,7 +9,7 @@ fn test_fetch() -> Result<(), Error> {
     toolchain.install(&workspace)?;
 
     let mut repo = Repo::new(&workspace, "foo")?;
-    let krate = Crate::git("foo", &repo.serve()?);
+    let krate = Crate::git(&repo.serve()?, "foo");
     krate.fetch(&workspace)?;
 
     // Return the commit that was used during a build.
@@ -52,7 +52,7 @@ fn test_fetch_with_authentication() -> Result<(), Error> {
     let workspace = crate::utils::init_workspace()?;
 
     let repo = Repo::new(&workspace, "foo")?.authenticated();
-    let krate = Crate::git("foo", &repo.serve()?);
+    let krate = Crate::git(&repo.serve()?, "foo");
 
     let err = krate.fetch(&workspace).unwrap_err();
     if let Some(&CommandError::Timeout(_)) = err.downcast_ref() {
