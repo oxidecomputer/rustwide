@@ -25,7 +25,7 @@ enum CrateType {
 pub struct Crate(CrateType);
 
 impl Crate {
-    /// Get the name of the crate
+    /// Get the name of the crate.
     pub fn name(&self) -> &str {
         match &self.0 {
             CrateType::Registry(krate) => &krate.name,
