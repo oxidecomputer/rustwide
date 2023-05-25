@@ -42,7 +42,7 @@ impl GitRepo {
                 warn!("bad output from `git rev-parse HEAD`");
             }
             Err(e) => {
-                warn!("unable to capture sha for {}: {}", self.url, e);
+                warn!("unable to capture sha for {}: {}", self.name, e);
             }
         }
         None
@@ -94,8 +94,8 @@ impl CrateTrait for GitRepo {
 
         let res = if path.join("HEAD").is_file() {
             info!(
-                "updating repository {} ({:?}) for {}",
-                self.url, self.branch, self.name
+                "updating repository ({:?}) for {} {:?}",
+                self.branch, self.name, path
             );
 
             Command::new(workspace, "git")
@@ -105,11 +105,11 @@ impl CrateTrait for GitRepo {
                 .cd(&path)
                 .process_lines(&mut detect_private_repositories)
                 .run()
-                .with_context(|_| format!("failed to update {}", self.url))
+                .with_context(|_| format!("failed to update {}", self.name))
         } else {
             info!(
-                "cloning repository {} ({:?}) for {}",
-                self.url, self.branch, self.name
+                "cloning repository ({:?}) for {}",
+                self.branch, self.name
             );
 
             let mut cmd = Command::new(workspace, "git")
@@ -124,7 +124,7 @@ impl CrateTrait for GitRepo {
                 .args(&[&path])
                 .process_lines(&mut detect_private_repositories)
                 .run()
-                .with_context(|_| format!("failed to clone {}", self.url))
+                .with_context(|_| format!("failed to clone {}", self.name))
         };
 
         if private_repository && res.is_err() {
@@ -147,13 +147,13 @@ impl CrateTrait for GitRepo {
             .args(&["clone"])
             .args(&[self.cached_path(workspace).as_path(), dest])
             .run()
-            .with_context(|_| format!("failed to checkout {}", self.url))?;
+            .with_context(|_| format!("failed to checkout {}", self.name))?;
         Ok(())
     }
 }
 
 impl std::fmt::Display for GitRepo {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "git repo {}", self.url)
+        write!(f, "git repo {}", self.name)
     }
 }
