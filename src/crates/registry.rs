@@ -17,7 +17,7 @@ pub struct AlternativeRegistry {
 }
 
 impl AlternativeRegistry {
-    /// Registry for specified registry index
+    /// Registry for specified registry index.
     pub fn new(registry_index: impl Into<String>) -> AlternativeRegistry {
         AlternativeRegistry {
             registry_index: registry_index.into(),
@@ -62,7 +62,7 @@ impl Registry {
 
 pub(super) struct RegistryCrate {
     registry: Registry,
-    name: String,
+    pub(super) name: String,
     version: String,
 }
 

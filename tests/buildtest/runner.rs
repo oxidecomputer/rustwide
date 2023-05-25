@@ -23,6 +23,7 @@ impl Runner {
                 .join("buildtest")
                 .join("crates")
                 .join(crate_name),
+            crate_name,
         );
         Ok(Runner {
             crate_name: if std::env::var("RUSTWIDE_TEST_INSIDE_DOCKER").is_ok() {

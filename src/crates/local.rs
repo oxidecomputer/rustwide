@@ -6,12 +6,16 @@ use std::path::{Path, PathBuf};
 use walkdir::WalkDir;
 
 pub(super) struct Local {
+    pub(super) name: String,
     path: PathBuf,
 }
 
 impl Local {
-    pub(super) fn new(path: &Path) -> Self {
-        Local { path: path.into() }
+    pub(super) fn new(path: &Path, name: &str) -> Self {
+        Local {
+            path: path.into(),
+            name: name.into(),
+        }
     }
 }
 
